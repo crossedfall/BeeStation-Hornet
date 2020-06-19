@@ -70,11 +70,10 @@ BLOCKING_QUERY_TIMEOUT 5
 BSQL_THREAD_LIMIT 50" > dbconfig.txt
 fi
 
-# Build docker image
-if [[ "$(docker images -q beestation:latest 2> /dev/null)" == "" ]]; then
-    echo -e "\e[31mBuilding docker image\e[0m\n"
-    docker build -q --pull --rm -f "Dockerfile" -t beestation https://raw.githubusercontent.com/Crossedfall/BeeStation-Hornet/master/tools/oneshot/Dockerfile
-fi
+# Build/update the docker image
+echo -e "\e[31mBuilding docker environment\e[0m\n"
+docker build -q --pull --rm -f "Dockerfile" -t beestation https://raw.githubusercontent.com/Crossedfall/BeeStation-Hornet/master/tools/oneshot/Dockerfile
+
 
 # Compose it up bb
 docker-compose up --quiet-pull --force-recreate --no-start
