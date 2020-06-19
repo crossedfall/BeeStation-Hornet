@@ -1,0 +1,51 @@
+version: '3.4'
+
+services:
+  beestation:
+    image: beestation:latest
+    ports:
+      - 1337:1337
+    volumes:
+      - ./StaticFiles/config:/beestation/config
+      - ./StaticFiles/data:/beestation/data
+    depends_on: 
+      - db
+    restart: on-failure
+    entrypoint: >
+      bash -c "
+      /wait &&
+      DreamDaemon beestation.dmb -port 1337 -trusted -close -verbose
+      "
+    environment:
+      - WAIT_HOSTS=db:3306
+      - WAIT_HOSTS_TIMEOUT=300
+      - WAIT_SLEEP_INTERVAL=30
+      - WAIT_HOST_CONNECT_TIMEOUT=30
+    networks:
+      - frontend
+      - backend
+  db:
+    image: mariadb
+    restart: on-failure
+    volumes:
+      - ./StaticFiles/database:/var/lib/mysql
+      - ./beestation_schema.sql:/docker-entrypoint-initdb.d/dump.sql
+    environment: 
+      MYSQL_INITDB_SKIP_TZINFO: 1
+      MYSQL_ROOT_PASSWORD: password1
+      MYSQL_DATABASE: ss13beedb
+      MYSQL_USER: ss13dbuser
+      MYSQL_PASSWORD: password1
+    networks:
+      backend:
+        ipv4_address: 172.16.238.10
+  
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
+    ipam: 
+      driver: default
+      config: 
+        - subnet: 172.16.238.0/24
