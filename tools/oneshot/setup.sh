@@ -25,7 +25,7 @@ else
     echo "config/" >> .git/info/sparse-checkout
     git pull -q origin master
     cd ..
-    echo -e "\n\e[32mConfig loaded\e[0m\n"
+    echo -e "\e[32mConfig loaded\e[0m\n"
 fi
 
 # Check for a schema file, if one isn't found download from upstream
