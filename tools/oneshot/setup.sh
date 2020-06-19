@@ -1,10 +1,5 @@
 #!/bin/bash
 
-# Check to see if the required files exist. If they don't download fresh copies
-if [ ! -f "./Dockerfile" ]; then
-    wget -q "https://raw.githubusercontent.com/Crossedfall/BeeStation-Hornet/master/tools/oneshot/Dockerfile"
-fi
-
 if [ ! -f "./docker-compose.yml" ]; then
     wget -q "https://raw.githubusercontent.com/Crossedfall/BeeStation-Hornet/master/tools/oneshot/docker-compose.yml"
 fi
@@ -44,9 +39,7 @@ done
 # Build docker image
 if [[ "$(docker images -q beestation:latest 2> /dev/null)" == "" ]]; then
     echo -e "\e[41mBuilding docker image\e[0m\n"
-    docker build -q --pull --rm -f "Dockerfile" -t beestation .
-else
-    echo -e "\e[42mDocker image detected. Skipping.\e[0m"
+    docker build -q --pull --rm -f "Dockerfile" -t beestation https://raw.githubusercontent.com/Crossedfall/BeeStation-Hornet/master/tools/oneshot/Dockerfile
 fi
 
 # If check is true, ask the user if they would like the script to setup the db config file
